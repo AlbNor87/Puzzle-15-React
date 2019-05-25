@@ -2,14 +2,16 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 const Title = styled.h1`
-    font-size: 22;
+    font-size: 12px;
     color: red;
 `;
 
-const Wrapper = styled.div`
+const TileWrapper = styled.div`
     margin: 5px;
-    width: 50px;
-    height: 50px;
+    width: ${props => props.width}px;
+    height: ${props => props.height}px;
+    left: ${props => props.left}px;
+    top: ${props => props.top}px;
     background-color: black;
 `;
 
@@ -17,14 +19,12 @@ class Tile extends Component {
     state = {  }
     render() {
         
-        const {
-            numberOfTiles
-        } = this.props;
+        const { digit } = this.props;
         
         return (
-            <Wrapper>
-                <Title>{this.props.numberOfTiles}</Title>
-            </Wrapper>
+            <TileWrapper id="TileWrapper">
+                <Title>{digit}</Title>
+            </TileWrapper>
           );
     }
 }
