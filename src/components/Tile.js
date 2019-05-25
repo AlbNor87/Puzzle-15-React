@@ -14,6 +14,8 @@ const TileWrapper = styled.div`
     align-items: center;
     cursor: pointer;
     border: 1px solid dodgerblue;
+    transition-duration: .200s;
+    transition-timing-function: ease-in;
 
 `;
 
@@ -31,8 +33,6 @@ class Tile extends Component {
     render() {
         
         const { digit, width, left, top, visible } = this.props;
-
-        console.log(this.props.width);
         
         return (
             <TileWrapper

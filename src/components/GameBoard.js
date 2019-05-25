@@ -11,7 +11,7 @@ const TilesContainer = styled.div`
 
 class GameBoard extends Component {
     render() {
-        
+
         const {
             tiles,
             onTileClick,
@@ -36,6 +36,8 @@ class GameBoard extends Component {
                     })}
 
                 </TilesContainer>
+
+
 
          );
     }

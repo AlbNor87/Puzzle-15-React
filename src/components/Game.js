@@ -5,9 +5,8 @@ import GameBoard from './GameBoard';
 const Container = styled.div`
     margin: auto;
     display: flex;
+    flex-direction: column;
     padding: 5px;
-    width: 50vw;
-    height: 25vw;
 `;
 
 class Game extends Component {
@@ -19,10 +18,20 @@ class Game extends Component {
         const tiles = this.generateTiles(tileSet, gridSize, tileSize);
         
         this.state = {
-            tiles,
+            tiles
         }
 
         this.onTileClick = this.onTileClick.bind(this);
+
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { tileSize, gridSize } = this.props;
+        const newTiles = this.generateTiles(nextProps.tileSet, gridSize, tileSize);
+    
+        this.setState({
+          tiles: newTiles,
+        });
     }
 
     render() {
@@ -39,6 +48,7 @@ class Game extends Component {
                     tiles={this.state.tiles}
                     onTileClick={this.onTileClick}
                 />
+               
             </Container>
          );
     }
@@ -82,13 +92,15 @@ class Game extends Component {
 
             let tilesArray = [...this.state.tiles];
 
-            this.swap(tilesArray, emptyTileIndex, tileIndex, [
+            this.swapPlaces(tilesArray, emptyTileIndex, tileIndex, [
                 'top',
                 'left',
                 'row',
                 'column',
                 'tileId',
             ]);
+
+            this.isGameOver(tilesArray);
 
             this.setState({
                 tiles: tilesArray,
@@ -109,8 +121,7 @@ class Game extends Component {
         return sameRowDiffColumn || sameColumnDiffRow;
     };
 
-    swap = (array, indexA, indexB, fields) => {
-        console.log("Swap!");
+    swapPlaces = (array, indexA, indexB, fields) => {
         fields.forEach(field => {
           const swap = array[indexA][field];
           array[indexA][field] = array[indexB][field];
@@ -118,18 +129,19 @@ class Game extends Component {
         });
     };
 
-    // generateRandomArray(arr, size) {
+    isGameOver(tilesArray) {
+        const correctedTiles = tilesArray.filter(tile => {
+          return tile.tileId + 1 === tile.digit;
+        });
 
-    //     let shuffled = arr.slice(0), i = arr.length, temp, index;
-    //     while (i--) {
-    //       index = Math.floor((i + 1) * Math.random());
-    //       temp = shuffled[index];
-    //       shuffled[index] = shuffled[i];
-    //       shuffled[i] = temp;
-    //     }
-      
-    //     return shuffled.slice(0, size);
-    // };
+        if(correctedTiles.length === this.state.tiles.length) {
+            alert("Win!");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
  
 export default Game;
