@@ -17,10 +17,12 @@ class Game extends Component {
         
         const { tileSet, gridSize, tileSize } = props;
         const tiles = this.generateTiles(tileSet, gridSize, tileSize);
-
+        
         this.state = {
-            tiles
+            tiles,
         }
+
+        this.onTileClick = this.onTileClick.bind(this);
     }
 
     render() {
@@ -56,20 +58,11 @@ class Game extends Component {
         })
 
         return tiles;
-
     }
 
     generateTilePosition(index, gridSize, tileSize) {
-
-        console.log('Index: ', index);
-
         const column = index % gridSize;
         const row = index / gridSize << 0;
-
-        console.log('left: ', column * tileSize);
-        console.log('top: ', row * tileSize);
-
-        
         return {
             column,
             row,
@@ -79,40 +72,51 @@ class Game extends Component {
         };
     }
 
-    onTileClick = tile => {
+    onTileClick(tile) {
+    
+        const emptyTile = this.state.tiles.find(t => t.digit === this.props.gridSize ** 2);
+        const emptyTileIndex = this.state.tiles.indexOf(emptyTile);
+        const tileIndex = this.state.tiles.findIndex(t => t.digit === tile.digit);
 
-        // const { gridSize } = this.props;
-    
-        // // Find empty tile
-        // const emptyTile = this.state.tiles.find(t => t.number === gridSize ** 2);
-        // const emptyTileIndex = this.state.tiles.indexOf(emptyTile);
-    
-        // // Find index of tile
-        // const tileIndex = this.state.tiles.findIndex(t => t.number === tile.number);
-    
-        // // Is this tale neighbouring the zero tile? If so, switch them.
-        // const d = distanceBetween(tile, emptyTile);
-        // if (d.neighbours) {
-        //   let t = Array.from(this.state.tiles).map(t => ({ ...t }));
-    
-        //   invert(t, emptyTileIndex, tileIndex, [
-        //     'top',
-        //     'left',
-        //     'row',
-        //     'column',
-        //     'tileId',
-        //   ]);
-    
-        //   const checkGameOver = this.isGameOver(t);
-    
-        //   this.setState({
-        //     gameState: checkGameOver ? GAME_OVER : GAME_STARTED,
-        //     tiles: t,
-        //     moves: this.state.moves + 1,
-        //     dialogOpen: checkGameOver ? true : false,
-        //   });
-        // }
-      };
+        if (this.tilesAreNeighbours(tile, emptyTile)) {
+
+            let tilesArray = [...this.state.tiles];
+
+            this.swap(tilesArray, emptyTileIndex, tileIndex, [
+                'top',
+                'left',
+                'row',
+                'column',
+                'tileId',
+            ]);
+
+            this.setState({
+                tiles: tilesArray,
+            });
+        }
+    };
+
+    tilesAreNeighbours(tileACoords, tileBCoords) {
+        const sameRow = tileACoords.row === tileBCoords.row;
+        const sameColumn = tileACoords.column === tileBCoords.column;
+        const columnDiff = tileACoords.column - tileBCoords.column;
+        const rowDiff = tileACoords.row - tileBCoords.row;
+        const diffColumn = Math.abs(columnDiff) === 1;
+        const diffRow = Math.abs(rowDiff) === 1;
+        const sameRowDiffColumn = sameRow && diffColumn;
+        const sameColumnDiffRow = sameColumn && diffRow;
+
+        return sameRowDiffColumn || sameColumnDiffRow;
+    };
+
+    swap = (array, indexA, indexB, fields) => {
+        console.log("Swap!");
+        fields.forEach(field => {
+          const swap = array[indexA][field];
+          array[indexA][field] = array[indexB][field];
+          array[indexB][field] = swap;
+        });
+    };
 
     // generateRandomArray(arr, size) {
 

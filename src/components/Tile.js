@@ -1,29 +1,50 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
-const Title = styled.h1`
-    font-size: 12px;
-    color: red;
-`;
-
 const TileWrapper = styled.div`
-    margin: 5px;
-    width: ${props => props.width}px;
-    height: ${props => props.height}px;
+    position: absolute;
+    width: ${props => props.size}px;
+    height: ${props => props.size}px;
     left: ${props => props.left}px;
     top: ${props => props.top}px;
     background-color: black;
+    color: dodgerblue;
+    display: ${props => (props.visible ? "flex" : "none" )};
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: 1px solid dodgerblue;
+
 `;
 
 class Tile extends Component {
-    state = {  }
+    constructor(props) {
+        super(props);
+    
+        this.onClick = this.onClick.bind(this);
+    }
+
+    onClick() {
+    this.props.onClick(this.props);
+    }
+    
     render() {
         
-        const { digit } = this.props;
+        const { digit, width, left, top, visible } = this.props;
+
+        console.log(this.props.width);
         
         return (
-            <TileWrapper id="TileWrapper">
-                <Title>{digit}</Title>
+            <TileWrapper
+            id="TileWrapper"
+            size={width}
+            left={left}
+            top={top}
+            onClick={this.onClick}
+            visible={visible}
+            key
+            >
+            {digit}
             </TileWrapper>
           );
     }
