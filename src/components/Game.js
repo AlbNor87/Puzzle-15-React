@@ -14,20 +14,24 @@ class Game extends Component {
     constructor(props) {
         super(props);        
         
-        const { tileSet, gridSize, tileSize } = props;
-        const tiles = this.generateTiles(tileSet, gridSize, tileSize);
+        const { tileSet, tileSize, rows, columns } = props;
+        const tiles = this.generateTiles(tileSet, tileSize, rows, columns);
         
         this.state = {
             tiles
         }
 
         this.onTileClick = this.onTileClick.bind(this);
+        console.log("TILESET: ", tileSet);
+        console.log("Game Constructor: ");
+        console.log("rows: ", rows);
+        console.log("columns: ", columns);
 
     }
 
     componentWillReceiveProps(nextProps) {
-        const { tileSize, gridSize } = this.props;
-        const newTiles = this.generateTiles(nextProps.tileSet, gridSize, tileSize);
+        const { tileSize, rows, columns } = this.props;
+        const newTiles = this.generateTiles(nextProps.tileSet, tileSize, rows, columns);
     
         this.setState({
           tiles: newTiles,
@@ -36,14 +40,17 @@ class Game extends Component {
 
     render() {
         const {
-            gridSize,
             tileSize,
+            rows,
+            columns
           } = this.props;
 
         return ( 
             <Container>
                 <GameBoard
-                    gridSize={gridSize}
+                    
+                    rows={rows}
+                    columns={columns}
                     tileSize={tileSize}
                     tiles={this.state.tiles}
                     onTileClick={this.onTileClick}
@@ -53,27 +60,56 @@ class Game extends Component {
          );
     }
 
-    generateTiles(tileSet, gridSize, tileSize) {
+    generateTiles(tileSet, tileSize, rows, columns) {
+
+        console.log("generateTiles rows: ", rows);
+        console.log("generateTiles columns: ", columns);
 
         const tiles = [];
 
         tileSet.forEach((digit, index) => {
 
             tiles[index] = {
-                ...this.generateTilePosition(index, gridSize, tileSize),
+                ...this.generateTilePosition(index, tileSize, rows, columns),
                 width: this.props.tileSize,
                 height: this.props.tileSize,
                 digit,
             }
         })
 
+        console.log({tiles});
+
         return tiles;
     }
+    // generateTiles(tileSet, gridSize, tileSize) {
 
-    generateTilePosition(index, gridSize, tileSize) {
-        const column = index % gridSize;
-        const row = index / gridSize << 0;
+    //     const tiles = [];
+
+    //     tileSet.forEach((digit, index) => {
+
+    //         tiles[index] = {
+    //             ...this.generateTilePosition(index, gridSize, tileSize),
+    //             width: this.props.tileSize,
+    //             height: this.props.tileSize,
+    //             digit,
+    //         }
+    //     })
+
+    //     return tiles;
+    // }
+
+    generateTilePosition(index, tileSize, rows, columns) {
+        const column = index % columns;
+        const row = index / columns << 0;
+
+        // const row = index % rows;
+        // const row = index / rows << 0;
+        // const row = index % rows;
+        // const row =  rows / index << 0;
         return {
+            index,
+            COLS: columns, 
+            ROWS: rows,
             column,
             row,
             left: column * tileSize,
@@ -81,12 +117,29 @@ class Game extends Component {
             tileId: index,
         };
     }
+    // generateTilePosition(index, gridSize, tileSize) {
+    //     const column = index % gridSize;
+    //     const row = index / gridSize << 0;
+    //     return {
+    //         column,
+    //         row,
+    //         left: column * tileSize,
+    //         top: row * tileSize,
+    //         tileId: index,
+    //     };
+    // }
 
     onTileClick(tile) {
+
+        // console.log("this.props.rows: ", this.props.rows);
+        // console.log("this.props.columns: ", this.props.columns);
     
-        const emptyTile = this.state.tiles.find(t => t.digit === this.props.gridSize ** 2);
+        const emptyTile = this.state.tiles.find(t => t.digit === this.props.rows * this.props.columns);
         const emptyTileIndex = this.state.tiles.indexOf(emptyTile);
         const tileIndex = this.state.tiles.findIndex(t => t.digit === tile.digit);
+
+        // console.log({tile})
+        // console.log("emptyTile: ", emptyTile);
 
         if (this.tilesAreNeighbours(tile, emptyTile)) {
 
