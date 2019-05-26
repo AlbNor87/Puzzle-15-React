@@ -7,18 +7,12 @@ const AppContainer = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  background-image: linear-gradient(${props => props.colors.secondary}, ${props => props.colors.primary});
+  background-image: radial-gradient(${props => props.colors.primary}, ${props => props.colors.tertiary});
   display: flex;
   justify-content: center;
   align-items: center;  
   width: 100vw;
   min-height: 100vh;
-`;
-
-const Dialog = styled.div`
-  width: 50%;
-  height: 50vh;
-  background-color: blanchedalmond;
 `;
 
 class App extends Component {
@@ -39,13 +33,22 @@ class App extends Component {
   }
   
   render() {
-    
+
     const viewWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-    const tileSize = (viewWidth + viewHeight) / config.columns * 0.25;
+    let orientationValue;
 
+    if(viewWidth < viewHeight){
+      //portrait
+      console.log("portrait")
+      orientationValue = 0.3;
+    } else {
+      //landscape
+      console.log("landscape");
+      orientationValue = 0.18;
+    } 
 
-
+    const tileSize = (viewWidth + viewHeight) / config.columns * orientationValue;
 
     return ( 
       <AppContainer colors={config.colors}>

@@ -2,22 +2,21 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import config from '../config';
 
-const TileWrapper = styled.div`
+const TileContainer = styled.div`
     position: absolute;
-    width: ${props => props.size - 2}px;
-    height: ${props => props.size - 2}px;
-    left: ${props => props.left + 1}px;
-    top: ${props => props.top + 1}px;
-    /* font-size: calc(2vw + 2vh); */
+    width: ${props => props.size - 4}px;
+    height: ${props => props.size - 4}px;
+    left: ${props => props.left + 2}px;
+    top: ${props => props.top + 2}px;
     font-size: ${props => props.size/4}px;
     font-weight: 700;
-    background-image: linear-gradient(${props => props.colors.primary}, ${props => props.colors.secondary});
+    background-image: linear-gradient(to bottom right, ${props => props.colors.primary}, ${props => props.colors.secondary});
     color: ${props => props.colors.tertiary};
     display: ${props => (props.visible ? "flex" : "none" )};
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    border: 1px solid ${props => props.colors.secondary};
+    /* border: 1px solid ${props => props.colors.secondary}; */
     transition-duration: .200s;
     transition-timing-function: ease-in;
 `;
@@ -38,8 +37,8 @@ class Tile extends Component {
         const { digit, width, left, top, visible } = this.props;
         
         return (
-            <TileWrapper
-            id="TileWrapper"
+            <TileContainer
+            id="TileContainer"
             size={width}
             left={left}
             top={top}
@@ -49,7 +48,7 @@ class Tile extends Component {
             colors={config.colors}
             >
             {digit}
-            </TileWrapper>
+            </TileContainer>
           );
     }
 }

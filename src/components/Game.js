@@ -6,14 +6,14 @@ import config from '../config';
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    /* padding: 5px; */
-    margin-bottom: ${props => props.size}px;
-    margin-top: ${props => props.size}px;
+    /* margin-bottom: ${props => props.size/2}px;
+    margin-top: ${props => props.size/2}px; */
+    box-shadow: 5px 5px 25px rgba(0,0,0, 0.4);
 `;
 
 const Dashboard = styled.div`
     width: 100%;
-    background-color: dodgerblue;
+    background-color: rgba(0,0,0,0.3);
 `;
 
 const MoveCounter = styled.div`
@@ -22,6 +22,7 @@ const MoveCounter = styled.div`
     height: ${props => props.size}px;
     min-height: 50px;
     font-size: ${props => props.size/2}px;
+    font-size: 200%;
     font-weight: 700;
     display: flex;
     justify-content: center;
@@ -30,18 +31,64 @@ const MoveCounter = styled.div`
     color: ${props => props.colors.tertiary};
 `;
 
-const ResetButton = styled.button`
+const Button = styled.button`
     border: none;
     width: 100%;
     height: ${props => props.size}px;
     min-height: 50px;
-    font-size: ${props => props.size/2}px;
+    font-size: 200%;
     font-weight: 700;
     color: ${props => props.colors.secondary};
+    outline: none;
+    background-color: ${props => props.colors.tertiary};
     cursor: pointer;
     :active {
-    box-shadow: 0 5px #666;
+    box-shadow: 5px 5px 25px rgba(0,0,0, 0.2);
+    outline: none;
     transform: translateY(4px);
+    }
+    :focus {
+        outline: none;
+    }
+`;
+
+const Dialog = styled.div`
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 10%;
+    margin: auto;
+    width: 50%;
+    min-height: 40vh;
+    background-color: ${props => props.colors.tertiary};
+    display: ${props => (props.visible ? "flex" : "none" )};
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 180%;
+    padding: 5%;
+    text-align: center;
+    box-shadow: 5px 5px 25px rgba(0,0,0, 0.3);
+    @media (max-width: 700px) {
+        width: 90%;
+        font-size: 130%;
+    }
+    h1{
+        font-size: 140%;
+        margin-bottom: 20px;
+    }
+`;
+
+const DialogButton = styled(Button)`
+    margin-top: 5%;
+    font-size: 100%;
+    width: 50%;
+    padding: 30px;
+    height: auto;
+    box-shadow: 5px 5px 25px rgba(0,0,0, 0.1);
+    @media (max-width: 1025px) {
+        width: 90%;
+        font-size: 100%;
     }
 `;
 
@@ -55,9 +102,12 @@ class Game extends Component {
         
         this.state = {
             tiles,
-            moveCount: 0
+            moveCount: 0,
+            showVictoryDialog: false,
+            showStartDialog: true,
         }
         this.onResetClick = this.onResetClick.bind(this);
+        this.onStartClick = this.onStartClick.bind(this);
         this.onTileClick = this.onTileClick.bind(this);
     }
 
@@ -79,6 +129,7 @@ class Game extends Component {
 
         return ( 
             <Container size={tileSize}>
+                
                 <GameBoard  
                     rows={rows}
                     columns={columns}
@@ -86,10 +137,38 @@ class Game extends Component {
                     tiles={this.state.tiles}
                     onTileClick={this.onTileClick}
                 />
+
                 <Dashboard>
                     <MoveCounter size={tileSize} colors={config.colors}> Move count: {this.state.moveCount}  </MoveCounter>
-                    <ResetButton onClick={this.onResetClick} size={tileSize} colors={config.colors}>Reset</ResetButton>
+                    <Button onClick={this.onResetClick} size={tileSize} colors={config.colors}>Reset</Button>
                 </Dashboard>
+
+                <Dialog
+                visible={this.state.showStartDialog}
+                colors={config.colors}
+                >
+                <h1>Welcome to a Game of Tiles!</h1> 
+                Your mission is to arrange all the tiles in numeric order, starting with number 1 in the left top corner and ending with the empty tile in the right bottom corner of the game board. Good luck!
+                <DialogButton
+                onClick={this.onStartClick}
+                size={tileSize}
+                colors={config.colors}
+                >Start</DialogButton>
+                </Dialog>
+
+                <Dialog
+                    visible={this.state.showVictoryDialog}
+                    colors={config.colors}>
+                    <h1>Congratulations!</h1> 
+                    You finished the game in {this.state.moveCount} moves!
+                    <DialogButton
+                    onClick={this.onResetClick}
+                    size={tileSize}
+                    colors={config.colors}
+                    >Reset</DialogButton>
+                </Dialog>
+
+
             </Container>
          );
     }
@@ -124,9 +203,17 @@ class Game extends Component {
         };
     }
 
+    onStartClick() {
+        this.setState({
+            moveCount: 0,
+            showStartDialog: false,
+        })
+    }
+
     onResetClick() {
         this.setState({
             moveCount: 0,
+            showVictoryDialog: false,
           })
         this.props.onResetClick(this.props);
     }
@@ -149,7 +236,7 @@ class Game extends Component {
                 'tileId',
             ]);
 
-            this.isGameOver(tilesArray);
+            this.isGameOver();
             this.setState({
                 tiles: tilesArray,
                 moveCount: this.state.moveCount + 1
@@ -178,17 +265,28 @@ class Game extends Component {
         });
     };
 
-    isGameOver(tilesArray) {
+    isGameOver() {
+
+        let tilesArray = [...this.state.tiles];
         const correctedTiles = tilesArray.filter(tile => {
           return tile.tileId + 1 === tile.digit;
         });
 
         if(correctedTiles.length === this.state.tiles.length) {
-            alert("Win!");
+
+            this.showVictoryDialog();
             return true;
         } else {
             return false;
         }
+    }
+
+    showVictoryDialog(){
+        
+        // alert("Win!")
+        this.setState({
+            showVictoryDialog: !this.state.showVictoryDialog
+        })
     }
 }
  
