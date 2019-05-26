@@ -3,9 +3,22 @@ import Game from './Game';
 import styled from 'styled-components';
 import config from '../config';
 
-const ShuffleButton = styled.button`
-    width: 150px;
-    height: 50px;
+const AppContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: linear-gradient(${props => props.colors.secondary}, ${props => props.colors.primary});
+  display: flex;
+  justify-content: center;
+  align-items: center;  
+  width: 100vw;
+  min-height: 100vh;
+`;
+
+const Dialog = styled.div`
+  width: 50%;
+  height: 50vh;
+  background-color: blanchedalmond;
 `;
 
 class App extends Component {
@@ -18,44 +31,32 @@ class App extends Component {
     }
     
     this.shuffleTiles = this.shuffleTiles.bind(this);
+    this.onResetClick = this.onResetClick.bind(this);
   }
 
   componentDidMount(){
     // this.shuffleTiles();
-    console.log("Rows: ", config.rows);
-    console.log("Columns: ", config.columns);
-
-    console.log("AppState: ", this.state);
-
-    // this.generateTileSet(config.rows, config.columns);
-
-
   }
   
   render() {
     
     const viewWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-    const tileSize = (viewWidth + viewHeight)/2 * 0.1;
-
-    // const numberOfTiles = rows * columns;
+    const tileSize = (viewWidth + viewHeight) / config.columns * 0.25;
 
 
-    //Grid 80vw
-    // const gridWidth = viewWidth * 0.8;
-    // const tileSize = gridWidth / numberOfTiles;
 
-    
+
     return ( 
-      <div>
+      <AppContainer colors={config.colors}>
       <Game
         rows={config.rows}
         columns={config.columns}
         tileSet={this.state.tileSet}
         tileSize={tileSize}
+        onResetClick={this.onResetClick}
       />
-      <ShuffleButton onClick={this.shuffleTiles}>Reset</ShuffleButton>
-    </div>
+      </AppContainer>
      );
   }
 
@@ -67,14 +68,15 @@ class App extends Component {
       tileSet[i] = i +1;
     }
 
-    // console.log("tileSet: ", tileSet);
-
     return tileSet;
+  }
 
+  onResetClick() {
+    this.shuffleTiles();
   }
 
   shuffleTiles(){
-    console.log("SHUFFLE!")
+    //Fisher-Yates style
     let array = [...this.state.tileSet];
     let shuffled = array.slice(0), i = array.length, temp, index;
     while (i--) {

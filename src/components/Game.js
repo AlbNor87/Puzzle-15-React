@@ -1,12 +1,48 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import GameBoard from './GameBoard';
+import config from '../config';
 
 const Container = styled.div`
-    margin: auto;
     display: flex;
     flex-direction: column;
-    padding: 5px;
+    /* padding: 5px; */
+    margin-bottom: ${props => props.size}px;
+    margin-top: ${props => props.size}px;
+`;
+
+const Dashboard = styled.div`
+    width: 100%;
+    background-color: dodgerblue;
+`;
+
+const MoveCounter = styled.div`
+    border: none;
+    width: 100%;
+    height: ${props => props.size}px;
+    min-height: 50px;
+    font-size: ${props => props.size/2}px;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: ${props => props.colors.secondary};
+    color: ${props => props.colors.tertiary};
+`;
+
+const ResetButton = styled.button`
+    border: none;
+    width: 100%;
+    height: ${props => props.size}px;
+    min-height: 50px;
+    font-size: ${props => props.size/2}px;
+    font-weight: 700;
+    color: ${props => props.colors.secondary};
+    cursor: pointer;
+    :active {
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+    }
 `;
 
 class Game extends Component {
@@ -18,15 +54,11 @@ class Game extends Component {
         const tiles = this.generateTiles(tileSet, tileSize, rows, columns);
         
         this.state = {
-            tiles
+            tiles,
+            moveCount: 0
         }
-
+        this.onResetClick = this.onResetClick.bind(this);
         this.onTileClick = this.onTileClick.bind(this);
-        console.log("TILESET: ", tileSet);
-        console.log("Game Constructor: ");
-        console.log("rows: ", rows);
-        console.log("columns: ", columns);
-
     }
 
     componentWillReceiveProps(nextProps) {
@@ -46,24 +78,23 @@ class Game extends Component {
           } = this.props;
 
         return ( 
-            <Container>
-                <GameBoard
-                    
+            <Container size={tileSize}>
+                <GameBoard  
                     rows={rows}
                     columns={columns}
                     tileSize={tileSize}
                     tiles={this.state.tiles}
                     onTileClick={this.onTileClick}
                 />
-               
+                <Dashboard>
+                    <MoveCounter size={tileSize} colors={config.colors}> Move count: {this.state.moveCount}  </MoveCounter>
+                    <ResetButton onClick={this.onResetClick} size={tileSize} colors={config.colors}>Reset</ResetButton>
+                </Dashboard>
             </Container>
          );
     }
 
     generateTiles(tileSet, tileSize, rows, columns) {
-
-        console.log("generateTiles rows: ", rows);
-        console.log("generateTiles columns: ", columns);
 
         const tiles = [];
 
@@ -78,38 +109,13 @@ class Game extends Component {
         })
 
         console.log({tiles});
-
         return tiles;
     }
-    // generateTiles(tileSet, gridSize, tileSize) {
-
-    //     const tiles = [];
-
-    //     tileSet.forEach((digit, index) => {
-
-    //         tiles[index] = {
-    //             ...this.generateTilePosition(index, gridSize, tileSize),
-    //             width: this.props.tileSize,
-    //             height: this.props.tileSize,
-    //             digit,
-    //         }
-    //     })
-
-    //     return tiles;
-    // }
 
     generateTilePosition(index, tileSize, rows, columns) {
         const column = index % columns;
         const row = index / columns << 0;
-
-        // const row = index % rows;
-        // const row = index / rows << 0;
-        // const row = index % rows;
-        // const row =  rows / index << 0;
         return {
-            index,
-            COLS: columns, 
-            ROWS: rows,
             column,
             row,
             left: column * tileSize,
@@ -117,29 +123,19 @@ class Game extends Component {
             tileId: index,
         };
     }
-    // generateTilePosition(index, gridSize, tileSize) {
-    //     const column = index % gridSize;
-    //     const row = index / gridSize << 0;
-    //     return {
-    //         column,
-    //         row,
-    //         left: column * tileSize,
-    //         top: row * tileSize,
-    //         tileId: index,
-    //     };
-    // }
+
+    onResetClick() {
+        this.setState({
+            moveCount: 0,
+          })
+        this.props.onResetClick(this.props);
+    }
 
     onTileClick(tile) {
-
-        // console.log("this.props.rows: ", this.props.rows);
-        // console.log("this.props.columns: ", this.props.columns);
     
         const emptyTile = this.state.tiles.find(t => t.digit === this.props.rows * this.props.columns);
         const emptyTileIndex = this.state.tiles.indexOf(emptyTile);
         const tileIndex = this.state.tiles.findIndex(t => t.digit === tile.digit);
-
-        // console.log({tile})
-        // console.log("emptyTile: ", emptyTile);
 
         if (this.tilesAreNeighbours(tile, emptyTile)) {
 
@@ -154,18 +150,18 @@ class Game extends Component {
             ]);
 
             this.isGameOver(tilesArray);
-
             this.setState({
                 tiles: tilesArray,
+                moveCount: this.state.moveCount + 1
             });
         }
     };
 
-    tilesAreNeighbours(tileACoords, tileBCoords) {
-        const sameRow = tileACoords.row === tileBCoords.row;
-        const sameColumn = tileACoords.column === tileBCoords.column;
-        const columnDiff = tileACoords.column - tileBCoords.column;
-        const rowDiff = tileACoords.row - tileBCoords.row;
+    tilesAreNeighbours(tileAPosition, tileBPosition) {
+        const sameRow = tileAPosition.row === tileBPosition.row;
+        const sameColumn = tileAPosition.column === tileBPosition.column;
+        const columnDiff = tileAPosition.column - tileBPosition.column;
+        const rowDiff = tileAPosition.row - tileBPosition.row;
         const diffColumn = Math.abs(columnDiff) === 1;
         const diffRow = Math.abs(rowDiff) === 1;
         const sameRowDiffColumn = sameRow && diffColumn;
@@ -194,7 +190,6 @@ class Game extends Component {
             return false;
         }
     }
-
 }
  
 export default Game;

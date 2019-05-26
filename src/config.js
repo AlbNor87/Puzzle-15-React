@@ -1,10 +1,11 @@
-// export const rows = 4;
-// export const columns = 4;
-
-
 const config = {
-    rows: 4,
-    columns: 4
+    rows: 10,
+    columns: 10,
+    colors: {
+        primary: 'dodgerblue',
+        secondary: 'darkblue',
+        tertiary: 'white',
+    }
 }
 
 export default config;

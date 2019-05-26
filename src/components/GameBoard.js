@@ -8,12 +8,6 @@ const TilesContainer = styled.div`
     position: relative;
     background-color: rgba(0,0,0,0.3);
 `;
-// const TilesContainer = styled.div`
-//     width: ${props => props.size}px;
-//     height: ${props => props.size}px;
-//     position: relative;
-//     background-color: rgba(0,0,0,0.3);
-// `;
 
 class GameBoard extends Component {
     render() {
@@ -25,13 +19,6 @@ class GameBoard extends Component {
             columns,
             tileSize,
           } = this.props;
-
-        //   console.log("GridSize ** 2 = ", gridSize ** 2);
-
-        //   console.log("rows: ", rows);
-        //   console.log("columns: ", columns);
-
-        //   console.log("rows * columns = ", rows * columns);
         
         return ( 
 
@@ -53,10 +40,7 @@ class GameBoard extends Component {
                     })}
 
                 </TilesContainer>
-
-
-
-         );
+        );
     }
 }
  
