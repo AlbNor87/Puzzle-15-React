@@ -16,7 +16,6 @@ const TileContainer = styled.div`
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    /* border: 1px solid ${props => props.colors.secondary}; */
     transition-duration: .200s;
     transition-timing-function: ease-in;
 `;

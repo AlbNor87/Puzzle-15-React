@@ -29,7 +29,7 @@ class App extends Component {
   }
 
   componentDidMount(){
-    // this.shuffleTiles();
+    this.shuffleTiles();
   }
   
   render() {
@@ -40,11 +40,9 @@ class App extends Component {
 
     if(viewWidth < viewHeight){
       //portrait
-      console.log("portrait")
       orientationValue = 0.3;
     } else {
       //landscape
-      console.log("landscape");
       orientationValue = 0.18;
     } 
 

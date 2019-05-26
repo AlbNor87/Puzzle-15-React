@@ -6,8 +6,6 @@ import config from '../config';
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    /* margin-bottom: ${props => props.size/2}px;
-    margin-top: ${props => props.size/2}px; */
     box-shadow: 5px 5px 25px rgba(0,0,0, 0.4);
 `;
 
@@ -167,10 +165,8 @@ class Game extends Component {
                     colors={config.colors}
                     >Reset</DialogButton>
                 </Dialog>
-
-
             </Container>
-         );
+        );
     }
 
     generateTiles(tileSet, tileSize, rows, columns) {
@@ -186,8 +182,6 @@ class Game extends Component {
                 digit,
             }
         })
-
-        console.log({tiles});
         return tiles;
     }
 
@@ -273,7 +267,6 @@ class Game extends Component {
         });
 
         if(correctedTiles.length === this.state.tiles.length) {
-
             this.showVictoryDialog();
             return true;
         } else {
@@ -282,8 +275,6 @@ class Game extends Component {
     }
 
     showVictoryDialog(){
-        
-        // alert("Win!")
         this.setState({
             showVictoryDialog: !this.state.showVictoryDialog
         })
