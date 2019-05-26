@@ -6,7 +6,7 @@ const config = {
     rows: 4,
     columns: 4,
     colors: {
-        primary: 'orange',
+        primary: 'dodgerblue',
         secondary: 'black',
         tertiary: 'white',
     }

@@ -59,6 +59,7 @@ const Dialog = styled.div`
     width: 50%;
     min-height: 40vh;
     background-color: ${props => props.colors.tertiary};
+    color: ${props => props.colors.secondary};
     display: ${props => (props.visible ? "flex" : "none" )};
     justify-content: center;
     align-items: center;
